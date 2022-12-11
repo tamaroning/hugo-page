@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>コンパイラ最適化を実装する | tamaron</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.79.1" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/hugo-page/ananke/css/main.min.css" >
+
+
+
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="コンパイラ最適化を実装する" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.tamaron.dev/hugo-page/post/2021-11-20/" />
+<meta property="article:published_time" content="2021-11-20T05:00:00+09:00" />
+<meta property="article:modified_time" content="2021-11-20T05:00:00+09:00" /><meta property="og:site_name" content="tamaron" />
+<meta itemprop="name" content="コンパイラ最適化を実装する">
+<meta itemprop="description" content="">
+<meta itemprop="datePublished" content="2021-11-20T05:00:00+09:00" />
+<meta itemprop="dateModified" content="2021-11-20T05:00:00+09:00" />
+<meta itemprop="wordCount" content="193">
+
+
+
+<meta itemprop="keywords" content="Compiler," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="コンパイラ最適化を実装する"/>
+<meta name="twitter:description" content=""/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/hugo-page/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        tamaron
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/about/" title="About ページ">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/post/" title="Post ページ">
+              Post
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/contact/" title="Contact ページ">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POST
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://twitter.com/share?url=https://www.tamaron.dev/hugo-page/post/2021-11-20/&amp;text=%e3%82%b3%e3%83%b3%e3%83%91%e3%82%a4%e3%83%a9%e6%9c%80%e9%81%a9%e5%8c%96%e3%82%92%e5%ae%9f%e8%a3%85%e3%81%99%e3%82%8b" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">コンパイラ最適化を実装する</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2021-11-20T05:00:00+09:00">November 20, 2021</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h2 id="はじめに">はじめに</h2>
+<p>自作したインタプリタにいくつかのコンパイラ最適化を実装したので、そのときのメモを残しておく。</p>
+<p>作ったもの</p>
+<p>[https://github.com/tamaroning/haribote-lang:embed:cite]</p>
+<p>入力したプログラムは以下の順で処理される。</p>
+<ol>
+<li>Lex : プログラムをトークン列に変換</li>
+<li>Parse : トークン列を中間表現に変換</li>
+<li>Optimize : 中間表現に手を加えて最適化する</li>
+<li>Execute : 中間表現を実行する</li>
+</ol>
+<p>このインタプリタでは構文木を介さずにトークン列から直接的に中間表現に変換している。中間表現はLLVM IRのサブセットに近い。</p>
+<p>以下ではOptimizeについて詳しく見ていく</p>
+<h2 id="コンパイラ最適化とは">コンパイラ最適化とは</h2>
+<p>コンパイル過程において中間表現/構文木をより良い中間表現/構文木に変換すること。</p>
+<p>主な目的は</p>
+<ul>
+<li>命令数が少ない (バイナリのサイズを減らす)</li>
+<li>実行速度を速くする</li>
+</ul>
+<p>LLVMやGCCなどが有名。</p>
+<h2 id="アプローチ">アプローチ</h2>
+<p>最適化を行うためには、まず中間表現全体の静的な解析が必要。</p>
+<p>静的解析は以下の二つにわけられる。</p>
+<ul>
+<li>制御フロー解析 (Control-flow analysis)</li>
+<li>データフロー解析 (Data-flow analysis)</li>
+</ul>
+<h2 id="制御フロー解析">制御フロー解析</h2>
+<p>プログラムを基本ブロック(Basic block)と辺(Edge)からなる有向グラフに変換する。
+基本ブロック内では、前から後ろに一直線に処理が走る。辺には基本ブロック間の処理の移動を表す。
+基本ブロックの最後に、条件分岐や無条件分岐がある場合は、その場所から別の基本ブロックへ辺が作られる。(条件分岐では一つのノードから二本の辺が出ることになる) こうしてできたグラフを制御フローグラフ(Control-flow graph: CFG)という。</p>
+<h2 id="データフロー解析">データフロー解析</h2>
+<p>具体的な最適化を行うために必要な情報を、制御フローグラフを用いて収集する。</p>
+<p>例えば、あるノード<code>a = x</code> に対して定数伝播/畳み込み(後述)を行う場合、 <em>x</em> が定数であるという情報が必要である。この場合は、どのような制御フローを介してノードに到達しても、必ずそのノードでは <em>x=C</em> で一定であることを証明することになる。</p>
+<p>一般的にサイクリックな制御フローの解析は難しい。</p>
+<h2 id="実際に実装した最適化">実際に実装した最適化</h2>
+<ul>
+<li>覗き穴最適化 (Peekhole Optimization)</li>
+<li>定数伝播 (Constant Propagation)</li>
+<li>定数畳み込み (Constant Folding)</li>
+<li>到達不可能コードの削除</li>
+</ul>
+<h3 id="覗き穴最適化">覗き穴最適化</h3>
+<p>以下のような変換を行う。</p>
+<p>before</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">goto</span> A;
+A:
+<span style="color:#66d9ef">goto</span> B;
+B:
+<span style="color:#75715e">/* 何らかの処理 */</span> 
+</code></pre></div><p>after</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">goto</span> B;
+A:
+<span style="color:#66d9ef">goto</span> B;
+B:
+<span style="color:#75715e">/* 何らかの処理 */</span>
+</code></pre></div><p>まず、1行目の<code>goto A</code>を見る。ジャンプ先Aではさらに無条件分岐<code>goto B</code>が呼ばれているので、<code>goto A</code>の最終的なジャンプ先はBである。
+<code>goto A</code>は<code>goto B</code>で置き換えられる。</p>
+<p>同様に、3行目の<code>goto B</code>の最終的なジャンプ先はBだが、これは命令を置き換えなくても済む。</p>
+<h4 id="実装">実装</h4>
+<p>制御フローグラフを構築しなくてもよく、分岐先を再帰的に辿ることでできる。ただし、<code>A: goto A</code>のように循環する場合を検出する必要がある。</p>
+<h3 id="定数伝播-定数畳み込み">定数伝播 &amp;定数畳み込み</h3>
+<p>定数伝播と定数畳み込みはコンパイル時に定数を計算するためのテクニックである。
+以下のような置き換えを行う。</p>
+<p>before</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">a <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
+b <span style="color:#f92672">=</span> a <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span>;
+c <span style="color:#f92672">=</span> b <span style="color:#f92672">+</span> <span style="color:#ae81ff">4</span>;
+</code></pre></div><p>after</p>
+<pre><code>a = 2;
+b = 6;
+c = 10;
+</code></pre><p>この場合は、以下のステップごとに行われる。</p>
+<ol>
+<li>1行目: a = 2は定数</li>
+<li>2行目: a は 2 で置き換える (伝播)</li>
+<li>2行目: b = 2 * 3 = 6 を計算する (畳み込み)</li>
+<li>3行目: b = 6 で置き換える (伝播)</li>
+<li>3行目: c = 6 + 4 を計算する (畳み込み)</li>
+</ol>
+<h4 id="実装-1">実装</h4>
+<p>上の例では処理が上から下に一直線に行われる、つまり基本ブロック内で行われる最適化である。この場合、変数と値のテーブルを使うことで簡単に実装ができる。</p>
+<p>一方で複雑な制御フローが絡む大局的な定数伝播はもっと難しい。制御フローグラフの各ノードごとに変数と値のテーブルを持たせることで、効率的に行うことができる。詳しくは<a href="http://pages.cs.wisc.edu/~horwitz/CS704-NOTES/2.DATAFLOW.html">[ref1]</a>を見てほしい。</p>
+<h3 id="到達不可能コードの削除-dce">到達不可能コードの削除 (DCE)</h3>
+<p>以下の変換をする最適化である。</p>
+<p>before</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">goto</span> A;
+a <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+A:
+</code></pre></div><p>after</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">goto</span> A;
+A:
+</code></pre></div><p>2行目の<code>a = 10</code>は必ず実行されない命令(到達不可能コード)だから、削除することでバイナリのサイズを減らすことができる。もちろん、ここからさらに、<code>goto A; A:</code>を削除することもできる。</p>
+<h4 id="実装-2">実装</h4>
+<p>制御フローグラフの各ノードに対して、到達可能を表すboolean値を持たせる。制御フローグラフのエントリーポイントからグラフの全探索を行い、到達したノードのboolean値を
+trueにする。最後にfalseなノードを削除する。</p>
+<p>##　Refs</p>
+<ul>
+<li>[1] <a href="http://pages.cs.wisc.edu/~horwitz/CS704-NOTES/2.DATAFLOW.html">http://pages.cs.wisc.edu/~horwitz/CS704-NOTES/2.DATAFLOW.html</a></li>
+</ul>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/hugo-page/tags/compiler/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Compiler</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">この記事の概要</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#はじめに">はじめに</a></li>
+    <li><a href="#コンパイラ最適化とは">コンパイラ最適化とは</a></li>
+    <li><a href="#アプローチ">アプローチ</a></li>
+    <li><a href="#制御フロー解析">制御フロー解析</a></li>
+    <li><a href="#データフロー解析">データフロー解析</a></li>
+    <li><a href="#実際に実装した最適化">実際に実装した最適化</a>
+      <ul>
+        <li><a href="#覗き穴最適化">覗き穴最適化</a></li>
+        <li><a href="#定数伝播-定数畳み込み">定数伝播 &amp;定数畳み込み</a></li>
+        <li><a href="#到達不可能コードの削除-dce">到達不可能コードの削除 (DCE)</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://www.tamaron.dev/hugo-page/" >
+    &copy;  tamaron 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

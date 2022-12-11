@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Compiler on tamaron</title>
+    <link>https://www.tamaron.dev/hugo-page/tags/compiler/</link>
+    <description>Recent content in Compiler on tamaron</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>tamaron</copyright>
+    <lastBuildDate>Fri, 03 Dec 2021 12:00:00 +0900</lastBuildDate><atom:link href="https://www.tamaron.dev/hugo-page/tags/compiler/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>rust-lang/rust ソースコードリーディング</title>
+      <link>https://www.tamaron.dev/hugo-page/post/2021-12-03/</link>
+      <pubDate>Fri, 03 Dec 2021 12:00:00 +0900</pubDate>
+      
+      <guid>https://www.tamaron.dev/hugo-page/post/2021-12-03/</guid>
+      <description>これはKMC(京大マイコンクラブ)アドベントカレンダー2021の3日目の記事です。</description>
+    </item>
+    
+    <item>
+      <title>コンパイラ最適化を実装する</title>
+      <link>https://www.tamaron.dev/hugo-page/post/2021-11-20/</link>
+      <pubDate>Sat, 20 Nov 2021 05:00:00 +0900</pubDate>
+      
+      <guid>https://www.tamaron.dev/hugo-page/post/2021-11-20/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

