@@ -1,4 +1,4 @@
-baseURL = 'https:/www.tamaron.dev/hugo-page/'
+baseURL = 'https://www.tamaron.dev/hugo-page/'
 languageCode = 'en-us'
 title = 'tamaron'
 theme = 'ananke'
