@@ -4,12 +4,12 @@ theme = 'ananke'
 
 Copyright = "tamaron"
 
-DefaultContentLanguage = "ja"
+DefaultContentLanguage = "en"
 SectionPagesMenu = "main"
-Paginate = 9
+Paginate = 6
 
 [languages]
-[languages.ja]
+[languages.en]
 title = "tamaron"
 weight = 1
 contentDir = "content/en"

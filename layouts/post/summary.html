@@ -1,0 +1,29 @@
+{{/*
+ananke\layouts\post\summary.htmlを改造
+*/}}
+<div class="mb3 pa4 {{ $.Param " text_color" | default "mid-gray" }} overflow-hidden">
+  <div class="f6">
+    {{ if .Date }}
+    <span>
+      {{ .Date | time.Format (default "January 2, 2006" .Site.Params.date_format) }}
+    </span>
+    {{end}}
+    {{ if .Params.Language }}
+    <span>
+      (lang: {{ .Params.Language }})
+    </span>
+    {{ else }}
+    <span>
+      (lang: ja)
+    </span>
+    {{ end }}
+  </div>
+  <h1 class="f3 near-black">
+    <a href="{{ .RelPermalink }}" class="link black dim">
+      {{ .Title }}
+    </a>
+  </h1>
+  <div class="nested-links f5 lh-copy nested-copy-line-height">
+    {{ .Summary }}
+  </div>
+</div>
