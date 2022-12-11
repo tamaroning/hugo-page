@@ -2,9 +2,9 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>tamaron</title>
-    <link>https:///www.tamaron.dev/hugo-page/</link>
+    <link>https://www.tamaron.dev/hugo-page/</link>
     <description>Recent content on tamaron</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https:///www.tamaron.dev/hugo-page/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language><atom:link href="https://www.tamaron.dev/hugo-page/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
