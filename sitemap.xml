@@ -3,15 +3,50 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://www.tamaron.dev/hugo-page/categories/</loc>
+    <loc>https://www.tamaron.dev/hugo-page/about/</loc>
+  </url>
+  
+  <url>
+    <loc>https://www.tamaron.dev/hugo-page/post/</loc>
+    <lastmod>2021-12-11T12:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.tamaron.dev/hugo-page/contact/</loc>
+  </url>
+  
+  <url>
+    <loc>https://www.tamaron.dev/hugo-page/tags/rust/</loc>
+    <lastmod>2021-12-11T12:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.tamaron.dev/hugo-page/post/2021-12-11/</loc>
+    <lastmod>2021-12-11T12:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.tamaron.dev/hugo-page/tags/source-code-reading/</loc>
+    <lastmod>2021-12-11T12:00:00+09:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.tamaron.dev/hugo-page/tags/</loc>
+    <lastmod>2021-12-11T12:00:00+09:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.tamaron.dev/hugo-page/</loc>
+    <lastmod>2021-12-11T12:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.tamaron.dev/hugo-page/post/2021-12-03/</loc>
+    <lastmod>2021-12-03T12:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.tamaron.dev/hugo-page/categories/</loc>
   </url>
   
 </urlset>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>rust-lang/rust ソースコードリーディング | tamaron</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="これはKMC(京大マイコンクラブ)アドベントカレンダー2021の3日目の記事です。">
+    <meta name="generator" content="Hugo 0.79.1" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/hugo-page/ananke/css/main.min.css" >
+
+
+
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="rust-lang/rust ソースコードリーディング" />
+<meta property="og:description" content="これはKMC(京大マイコンクラブ)アドベントカレンダー2021の3日目の記事です。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.tamaron.dev/hugo-page/post/2021-12-03/" />
+<meta property="article:published_time" content="2021-12-03T12:00:00+09:00" />
+<meta property="article:modified_time" content="2021-12-03T12:00:00+09:00" /><meta property="og:site_name" content="tamaron" />
+<meta itemprop="name" content="rust-lang/rust ソースコードリーディング">
+<meta itemprop="description" content="これはKMC(京大マイコンクラブ)アドベントカレンダー2021の3日目の記事です。">
+<meta itemprop="datePublished" content="2021-12-03T12:00:00+09:00" />
+<meta itemprop="dateModified" content="2021-12-03T12:00:00+09:00" />
+<meta itemprop="wordCount" content="241">
+
+
+
+<meta itemprop="keywords" content="Rust,Source code reading," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="rust-lang/rust ソースコードリーディング"/>
+<meta name="twitter:description" content="これはKMC(京大マイコンクラブ)アドベントカレンダー2021の3日目の記事です。"/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/hugo-page/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        tamaron
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/about/" title="About ページ">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/post/" title="Post ページ">
+              Post
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/contact/" title="Contact ページ">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POST
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://twitter.com/share?url=https://www.tamaron.dev/hugo-page/post/2021-12-03/&amp;text=rust-lang/rust%20%e3%82%bd%e3%83%bc%e3%82%b9%e3%82%b3%e3%83%bc%e3%83%89%e3%83%aa%e3%83%bc%e3%83%87%e3%82%a3%e3%83%b3%e3%82%b0" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">rust-lang/rust ソースコードリーディング</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2021-12-03T12:00:00+09:00">December 3, 2021</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>これは<a href="https://adventar.org/calendars/6895">KMC(京大マイコンクラブ)アドベントカレンダー2021</a> の3日目の記事です。</p>
+<p>昨日の記事はうたがわききさんの「List::Utilのpairs関数がPythonで欲しくなって」でした。</p>
+<h2 id="はじめに">はじめに</h2>
+<p>こんにちは。一回生のたまろんです。最近は言語処理系を読んだり書いたりしています。</p>
+<p>この記事では、コンパイラを読んだことがない人を対象に、Rustコンパイラ(rustc)のソースコードを解説します。
+Rustは性能、メモリ安全性、安全な並行性を目指して設計されたマルチパラダイムのプログラミング言語です。近年注目を集めている言語でLinux, npm, Dropboxなどに採用されています。</p>
+<h2 id="コンパイラの処理">コンパイラの処理</h2>
+<p>rustcはバックエンドにLLVMを使っています。rustcはソースコードがLLVM-IRになるまでに以下の5つの形に変換します。</p>
+<ul>
+<li>トークン列: ソースコードを分割した最小単位 (トークン) の列</li>
+<li>AST: トークン列を木構造にしたもの</li>
+<li>HIR: 高レベル中間表現</li>
+<li>THIR: HIRに型の情報をつけたもの</li>
+<li>MIR: 中レベル中間表現</li>
+</ul>
+<p>そして、次の過程によって変換 (+解析) が行われます。</p>
+<ol>
+<li>トークナイズ (ソースコード → トークン列)</li>
+<li>パース (トークン列 → AST)</li>
+<li>マクロ展開, ASTの検証、型検査 (AST → THIR/HIR)</li>
+<li>Lowering (HIR → MIR)</li>
+<li>コード生成 (MIR → LLVM-IR)</li>
+</ol>
+<p>rustcのソースコードは以下にあります。</p>
+<p>[https://github.com/rust-lang/rust:embed:cite]</p>
+<p>ディレクトリは以下の通り</p>
+<ul>
+<li>compiler : rustc本体</li>
+<li>library : 標準ライブラリ</li>
+<li>src : テストスイート、rustdocなど</li>
+</ul>
+<p>この記事ではcompilerフォルダ以下のコンパイラドライバ、レクサー、パーサーを中心に見ていきます。</p>
+<h2 id="driverとinterfaceまわり">DriverとInterfaceまわり</h2>
+<p>rustcの実質的なエントリーポイントはコンパイラドライバのクレート (/compiler/rustc_driver) の<a href="https://github.com/rust-lang/rust/blob/master/compiler/rustc_driver/src/lib.rs#L1356-L1384">main関数</a>です。
+main関数から、<a href="https://github.com/rust-lang/rust/blob/master/compiler/rustc_driver/src/lib.rs#L192-L438">RunCompiler.run</a>関数が呼び出され、その内部で以下の<code>interface::run_compiler</code>関数が呼び出されます。</p>
+<p>rustc_interfaceクレートはrustcをライブラリとして使うときのコンパイラのエントリーポイントになります。(理由は外部からサードパーティ製の解析や最適化をかけるため)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() -&gt; <span style="color:#f92672">!</span> {
+    ...
+    <span style="color:#66d9ef">let</span> exit_code <span style="color:#f92672">=</span> catch_with_exit_code(<span style="color:#f92672">||</span> {
+        <span style="color:#66d9ef">let</span> args <span style="color:#f92672">=</span> env::args_os()
+            .enumerate()... ;
+        <span style="color:#75715e">// run内部で以下のrun_compiler関数が呼び出される
+</span><span style="color:#75715e"></span>        RunCompiler::new(<span style="color:#f92672">&amp;</span>args, <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> callbacks).run()
+    });
+    ...
+    process::exit(exit_code)
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">run_compiler</span><span style="color:#f92672">&lt;</span>R: Send<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">mut</span> config: <span style="color:#a6e22e">Config</span>, f: <span style="color:#a6e22e">impl</span> FnOnce(<span style="color:#f92672">&amp;</span>Compiler) -&gt; <span style="color:#a6e22e">R</span> <span style="color:#f92672">+</span> Send) -&gt; <span style="color:#a6e22e">R</span> {
+    tracing::trace<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;run_compiler&#34;</span>);
+    ...
+    <span style="color:#75715e">// configからCompiler構造体を作りクロージャ内に渡す
+</span><span style="color:#75715e"></span>    interface::run_compiler(config, <span style="color:#f92672">|</span>compiler<span style="color:#f92672">|</span> {
+        ...
+        <span style="color:#66d9ef">let</span> linker <span style="color:#f92672">=</span> compiler.enter(<span style="color:#f92672">|</span>queries<span style="color:#f92672">|</span> {
+            <span style="color:#66d9ef">let</span> early_exit <span style="color:#f92672">=</span> <span style="color:#f92672">||</span> sess.compile_status().map(<span style="color:#f92672">|</span>_<span style="color:#f92672">|</span> None);
+            <span style="color:#75715e">// パースを行うクエリを起動する
+</span><span style="color:#75715e"></span>            queries.parse()<span style="color:#f92672">?</span>;
+            ...
+        })
+    ...
+}
+</code></pre></div><p>この<code>rustc_driver::run_compiler</code>関数では第一引数のconfigからCompiler構造体を作り、第二引数のクロージャに渡しています。configにはコマンドライン引数や出力ファイル名といったコンパイラの設定情報が入っています。</p>
+<p>また、注目すべき箇所は<code>queries.parse()?</code>の行です。これは要求駆動コンパイルの処理の一部になっています。この関数を追っていくと、<code>rustc_parser::parse_crate_from_file</code>関数にたどり着きますが、ここで実際にソースコードのパースが行われます。</p>
+<h2 id="要求駆動コンパイル">要求駆動コンパイル</h2>
+<p>要求駆動コンパイルは、メモ化を利用した高速なコンパイル方法です。クエリを使うことで差分に注目するインクリメンタルなコンパイルが可能になります。</p>
+<p>クエリは入力に対して、何かを計算して出力します。
+例えば type_of クエリはあるアイテムの def_id が与えられるとそのアイテムの型を計算します。</p>
+<p>例えば、実際のコンパイル全体はクエリ駆動になります。</p>
+<ol>
+<li>トップレベルの compile クエリがコード生成の必要があるモジュールのリスト (codegen-units)を取得する</li>
+<li>codegen-units のリストを計算する際に、ソースコードで定義されているすべてのモジュールのリストを返すクエリがさらに呼び出される</li>
+<li>呼び出されたクエリによって、さらにクエリを呼び出される</li>
+<li>以下繰り返し</li>
+</ol>
+<h2 id="parserとlexer">ParserとLexer</h2>
+<p>パーサー (/compiler/rustc_parser/src/parser) では、Parser構造体に対して実装されている<code>parse_xxxx</code>の名前の関数がxxxxをパースします。(例えばparse_stmt, parse_exprはそれぞれ文と式をパースします。)</p>
+<p>レクサー (/compiler/rustc_parser/src/lexer) は内部で別のrustc_lexerクレートを使っていて、このクレートで文字列のパターンマッチを行います。
+(以前は同じクレートだったけど、ライブラリ化するために分けたそうです。)</p>
+<p>次の<code>cook_lexer_token</code>関数はrustc_lexerクレートのトークンをrustc_parserで扱うためのトークンに変換しています。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">cook_lexer_token</span>(<span style="color:#f92672">&amp;</span>self, token: <span style="color:#a6e22e">rustc_lexer</span>::TokenKind, start: <span style="color:#a6e22e">BytePos</span>) -&gt; Option<span style="color:#f92672">&lt;</span>TokenKind<span style="color:#f92672">&gt;</span> {
+        Some(<span style="color:#66d9ef">match</span> token {
+            ....
+            rustc_lexer::TokenKind::Semi <span style="color:#f92672">=&gt;</span> token::Semi, <span style="color:#75715e">// ;
+</span><span style="color:#75715e"></span>            rustc_lexer::TokenKind::Comma <span style="color:#f92672">=&gt;</span> token::Comma, <span style="color:#75715e">// ,
+</span><span style="color:#75715e"></span>            rustc_lexer::TokenKind::Dot <span style="color:#f92672">=&gt;</span> token::Dot, <span style="color:#75715e">// .
+</span><span style="color:#75715e"></span>            ...
+            rustc_lexer::TokenKind::Lifetime { starts_with_number } <span style="color:#f92672">=&gt;</span> {
+                <span style="color:#66d9ef">let</span> lifetime_name <span style="color:#f92672">=</span> self.str_from(start);
+                <span style="color:#66d9ef">if</span> starts_with_number {
+                    self.err_span_(start, self.pos, <span style="color:#e6db74">&#34;lifetimes cannot start with a number&#34;</span>);
+                }
+                <span style="color:#75715e">// String Interningを行う
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">let</span> ident <span style="color:#f92672">=</span> Symbol::intern(lifetime_name);
+                token::Lifetime(ident)
+            }
+            ...
+    })
+}
+</code></pre></div><p>また、レクサーは同時にString Interningを行います。これは、コンパイル時のメモリを節約するためのテクニックです。
+一つの文字列に対して一つのポインタを対応させます。同じ文字列が同じ場所を指し、異なる文字列が異なる場所を指すようにすることで、文字列の長さの分だけメモリの使用量が削減できます。</p>
+<p>先ほどのコードでは<code>let ident = Symbol::intern(lifetime_name);</code>の行でライフタイム名を対象にしたString Interningが行われています。</p>
+<p>パースが終了したら、<code>interface::run_compiler</code>関数で新たなクエリが呼び出され、次のステップへと進みます。</p>
+<h2 id="おわりに">おわりに</h2>
+<p>rustcのソースコードは巨大でざっくり読もうとするだけでも時間がかかりました。僕はまだ読み始めたばかりですが、rustc dev guideなどドキュメントが充実していてとても読みかったです。これからは、ASTや型まわりを中心に読んでいって、時間があれば記事にまとめたいと思います。</p>
+<p>明日のカレンダーの記事はそすうぽよさんの「数え上げお姉さんよ永遠なれ」です</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/hugo-page/tags/rust/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Rust</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/hugo-page/tags/source-code-reading/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Source code reading</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">この記事の概要</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#はじめに">はじめに</a></li>
+    <li><a href="#コンパイラの処理">コンパイラの処理</a></li>
+    <li><a href="#driverとinterfaceまわり">DriverとInterfaceまわり</a></li>
+    <li><a href="#要求駆動コンパイル">要求駆動コンパイル</a></li>
+    <li><a href="#parserとlexer">ParserとLexer</a></li>
+    <li><a href="#おわりに">おわりに</a></li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://www.tamaron.dev/hugo-page/" >
+    &copy;  tamaron 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

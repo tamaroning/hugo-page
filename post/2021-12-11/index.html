@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>rust-lang/cargo ソースコードリーディング | tamaron</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="cargoの[[bin]]属性の処理を解説した記事です。">
+    <meta name="generator" content="Hugo 0.79.1" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/hugo-page/ananke/css/main.min.css" >
+
+
+
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="rust-lang/cargo ソースコードリーディング" />
+<meta property="og:description" content="cargoの[[bin]]属性の処理を解説した記事です。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.tamaron.dev/hugo-page/post/2021-12-11/" />
+<meta property="article:published_time" content="2021-12-11T12:00:00+09:00" />
+<meta property="article:modified_time" content="2021-12-11T12:00:00+09:00" /><meta property="og:site_name" content="tamaron" />
+<meta itemprop="name" content="rust-lang/cargo ソースコードリーディング">
+<meta itemprop="description" content="cargoの[[bin]]属性の処理を解説した記事です。">
+<meta itemprop="datePublished" content="2021-12-11T12:00:00+09:00" />
+<meta itemprop="dateModified" content="2021-12-11T12:00:00+09:00" />
+<meta itemprop="wordCount" content="664">
+
+
+
+<meta itemprop="keywords" content="Rust,Source code reading," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="rust-lang/cargo ソースコードリーディング"/>
+<meta name="twitter:description" content="cargoの[[bin]]属性の処理を解説した記事です。"/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/hugo-page/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        tamaron
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/about/" title="About ページ">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/post/" title="Post ページ">
+              Post
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/hugo-page/contact/" title="Contact ページ">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POST
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://twitter.com/share?url=https://www.tamaron.dev/hugo-page/post/2021-12-11/&amp;text=rust-lang/cargo%20%e3%82%bd%e3%83%bc%e3%82%b9%e3%82%b3%e3%83%bc%e3%83%89%e3%83%aa%e3%83%bc%e3%83%87%e3%82%a3%e3%83%b3%e3%82%b0" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">rust-lang/cargo ソースコードリーディング</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2021-12-11T12:00:00+09:00">December 11, 2021</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h2 id="はじめに">はじめに</h2>
+<p>cargoにはバイナリの名前をパッケージ名と異なるものにする機能がある。
+この機能はcargo-feature <code>different_binary_name</code>という。</p>
+<p>Cargo.tomlに以下を追記すると、cargo buildで出力されるバイナリは<code>piyo</code>になる。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">[[<span style="color:#ae81ff">bin]]</span>
+<span style="color:#ae81ff">name = &#34;piyo&#34;</span>
+<span style="color:#ae81ff">path = &#34;src/piyo.rs&#34;</span>
+</code></pre></div><p>この機能は以下のIssueで提案され採用された。</p>
+<ul>
+<li>[Issue] <a href="https://github.com/rust-lang/cargo/issues/1706">Ability to specify the output name for a bin target different from the crate name #1706</a></li>
+<li>[PR] <a href="https://github.com/rust-lang/cargo/pull/9627">Ability to specify the output name for a bin target different from the crate name #9627</a></li>
+</ul>
+<h2 id="基本事項">基本事項</h2>
+<p>この記事はこのPRをもとにrust-lang/cargoのソースコードを読んでわかったことをまとめたものである。もともと自分用メモだったので、汚いのはご容赦ください、</p>
+<p>まず、ファイル名の出力に関しての基本事項を以下に示した。これはコードを読み進めてわかったことだが、本記事ではこれらをもとにソースコードを見ていく。</p>
+<ul>
+<li><code>Target</code>構造体: 全体のconfig情報を管理する</li>
+<li><code>OutputFile</code>構造体: 出力ファイルごとに作られる構造体
+<ul>
+<li>出力先パスの情報</li>
+<li>ハードリンクに関する情報</li>
+</ul>
+</li>
+</ul>
+<h2 id="prで提案された手法">PRで提案された手法</h2>
+<ul>
+<li>Cargo.tomlからバイナリ名を取得</li>
+<li>バイナリ名が指定されていない =&gt; 従来通り、パッケージ名を使う。</li>
+<li>バイナリ名指定あり =&gt; Target構造体にそのバイナリ名を持たせる</li>
+</ul>
+<h2 id="ハードリンク">ハードリンク</h2>
+<p><code>cargo build</code>すると、バイナリはtarget/debugに作られるが、バイナリの実体はそれより下の階層(target/debug/depsなど)にある。
+targetの階層につくられるバイナリは実はハードリンクである。</p>
+<h2 id="ソースコードを読む">ソースコードを読む</h2>
+<p>Targetはバイナリやライブラリの情報を一括してもつ。
+<code>Target.bin_name</code>は<code>different_binary_name</code>を実現するためにあるフィールド。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// src/cargo/core/manifest.rs
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// Information about a binary, a library, an example, etc. that is
+</span><span style="color:#75715e">// part of the package.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Target</span> {
+    inner: <span style="color:#a6e22e">Arc</span><span style="color:#f92672">&lt;</span>TargetInner<span style="color:#f92672">&gt;</span>,
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TargetInner</span> {
+    kind: <span style="color:#a6e22e">TargetKind</span>,
+    name: String,
+    <span style="color:#75715e">// Note that `bin_name` is used for the cargo-feature `different_binary_name`
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// Some(..)ならば、[[bin]]でバイナリ名が指定されている
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// Noneならば、バイナリ名が指定されていない
+</span><span style="color:#75715e"></span>    bin_name: Option<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span>,
+    <span style="color:#75715e">// Note that the `src_path` here is excluded from the `Hash` implementation
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// as it&#39;s absolute currently and is otherwise a little too brittle for
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// causing rebuilds. Instead the hash for the path that we send to the
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// compiler is handled elsewhere.
+</span><span style="color:#75715e"></span>    src_path: <span style="color:#a6e22e">TargetSourcePath</span>,
+    required_features: Option<span style="color:#f92672">&lt;</span>Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;&gt;</span>,
+    tested: <span style="color:#66d9ef">bool</span>,
+    benched: <span style="color:#66d9ef">bool</span>,
+    doc: <span style="color:#66d9ef">bool</span>,
+    doctest: <span style="color:#66d9ef">bool</span>,
+    harness: <span style="color:#66d9ef">bool</span>, <span style="color:#75715e">// whether to use the test harness (--test)
+</span><span style="color:#75715e"></span>    for_host: <span style="color:#66d9ef">bool</span>,
+    proc_macro: <span style="color:#66d9ef">bool</span>,
+    edition: <span style="color:#a6e22e">Edition</span>,
+}
+
+<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">TargetKind</span> {
+    Lib(Vec<span style="color:#f92672">&lt;</span>CrateType<span style="color:#f92672">&gt;</span>),
+    Bin,
+    Test,
+    Bench,
+    ExampleLib(Vec<span style="color:#f92672">&lt;</span>CrateType<span style="color:#f92672">&gt;</span>),
+    ExampleBin,
+    CustomBuild,
+}
+
+<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">bin_target</span>(
+        name: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>,
+        bin_name: Option<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span>,
+        src_path: <span style="color:#a6e22e">PathBuf</span>,
+        required_features: Option<span style="color:#f92672">&lt;</span>Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;&gt;</span>,
+        edition: <span style="color:#a6e22e">Edition</span>,
+) -&gt; <span style="color:#a6e22e">Target</span> {
+    ...
+}
+
+<span style="color:#66d9ef">impl</span> Target {
+    ...
+    <span style="color:#75715e">// バイナリの名前を返すメソッド
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">binary_filename</span>(<span style="color:#f92672">&amp;</span>self) -&gt; Option<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> {
+        self.inner.bin_name.clone()
+    }
+    
+    <span style="color:#75715e">// バイナリの名前をセットするメソッド
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">set_binary_name</span>(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> self, bin_name: Option<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span>) -&gt; <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">mut</span> Target {
+        Arc::make_mut(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> self.inner).bin_name <span style="color:#f92672">=</span> bin_name;
+        self
+    }
+    ...
+}
+</code></pre></div><p>以下は関連するコード
+tomlで渡されたfilenameをTarget構造体に渡す。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// src/cargo/util/toml/targets.rs
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">clean_bins</span>(
+    features: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">Features</span>,
+    toml_bins: Option<span style="color:#f92672">&lt;&amp;</span>Vec<span style="color:#f92672">&lt;</span>TomlBinTarget<span style="color:#f92672">&gt;&gt;</span>,
+    package_root: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">Path</span>,
+    package_name: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>,
+    edition: <span style="color:#a6e22e">Edition</span>,
+    autodiscover: Option<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">bool</span><span style="color:#f92672">&gt;</span>,
+    warnings: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">mut</span> Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span>,
+    errors: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">mut</span> Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span>,
+    has_lib: <span style="color:#66d9ef">bool</span>,
+) -&gt; <span style="color:#a6e22e">CargoResult</span><span style="color:#f92672">&lt;</span>Vec<span style="color:#f92672">&lt;</span>Target<span style="color:#f92672">&gt;&gt;</span> {
+    ...
+    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> target <span style="color:#f92672">=</span> Target::bin_target(
+            <span style="color:#f92672">&amp;</span>bin.name(),
+            bin.filename.clone(),
+            path,
+            bin.required_features.clone(),
+            edition,
+        );
+    ...
+}
+</code></pre></div><p>出力するバイナリの名前を決定する関数。
+重要なのはSomeとNoneの場合分け。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// src/cargo/core/compiler/build_context/target_info.rs
+</span><span style="color:#75715e"></span>
+<span style="color:#e6db74">/// The filename for this FileType that Cargo should use when &#34;uplifting&#34;
+</span><span style="color:#e6db74">/// it to the destination directory.
+</span><span style="color:#e6db74"></span><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">uplift_filename</span>(<span style="color:#f92672">&amp;</span>self, target: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">Target</span>) -&gt; String {
+    <span style="color:#66d9ef">let</span> name <span style="color:#f92672">=</span> <span style="color:#66d9ef">match</span> target.binary_filename() {
+        <span style="color:#75715e">// [[bin]]でバイナリの名前が指定されているのでそれを使う
+</span><span style="color:#75715e"></span>        Some(name) <span style="color:#f92672">=&gt;</span> name,
+        <span style="color:#75715e">// パッケージ名をバイナリの名前に使う
+</span><span style="color:#75715e"></span>        None <span style="color:#f92672">=&gt;</span> {
+            <span style="color:#75715e">// For binary crate type, `should_replace_hyphens` will always be false.
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// 名前に含まれるハイフンを処理する
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> self.should_replace_hyphens {
+                target.crate_name()
+            } <span style="color:#66d9ef">else</span> {
+                target.name().to_string()
+            }
+        }
+    };
+    format<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{}{}{}&#34;</span>, self.prefix, name, self.suffix)
+}
+</code></pre></div><p>次にハードリンクについて。
+本PRでコードの修正は入ってないが、参考のために載せておく。</p>
+<p>uplift_to関数: <code>Option&lt;PathBuff&gt;</code>型を返す
+戻り値はSome(path)なら、pathにハードリンクを作る、Noneなら、ハードリンクを作らないことを意味する。</p>
+<p>calc_outputs_rustc関数: <code>CargoResult&lt;Vec&lt;OutputFile&gt;&gt;</code>型を返す。
+戻り値はrustcが必要とする出力ファイルの情報をもつ。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// src/cargo/core/compiler/context/compilation_files.rs
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">impl</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span>, <span style="color:#a6e22e">&#39;cfg</span>: <span style="color:#a6e22e">&#39;a</span><span style="color:#f92672">&gt;</span> CompilationFiles<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span>, <span style="color:#a6e22e">&#39;cfg</span><span style="color:#f92672">&gt;</span> {
+    ...
+    <span style="color:#e6db74">/// Returns the path where the output for the given unit and FileType
+</span><span style="color:#e6db74"></span>    <span style="color:#e6db74">/// should be uplifted to.
+</span><span style="color:#e6db74"></span>    <span style="color:#e6db74">///
+</span><span style="color:#e6db74"></span>    <span style="color:#e6db74">/// Returns `None` if the unit shouldn&#39;t be uplifted (for example, a
+</span><span style="color:#e6db74"></span>    <span style="color:#e6db74">/// dependent rlib).
+</span><span style="color:#e6db74"></span>    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">uplift_to</span>(<span style="color:#f92672">&amp;</span>self, unit: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">Unit</span>, file_type: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">FileType</span>, from_path: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">Path</span>) -&gt; Option<span style="color:#f92672">&lt;</span>PathBuf<span style="color:#f92672">&gt;</span> {
+        ...
+    }
+
+    <span style="color:#75715e">// rustcによって作成されたファイル情報を出力する
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">/// Computes the actual, full pathnames for all the files generated by rustc.
+</span><span style="color:#e6db74"></span>    <span style="color:#e6db74">///
+</span><span style="color:#e6db74"></span>    <span style="color:#e6db74">/// The `OutputFile` also contains the paths where those files should be
+</span><span style="color:#e6db74"></span>    <span style="color:#e6db74">/// &#34;uplifted&#34; to.
+</span><span style="color:#e6db74"></span>    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">calc_outputs_rustc</span>(
+        <span style="color:#f92672">&amp;</span>self,
+        unit: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">Unit</span>,
+        bcx: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">BuildContext</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span>, <span style="color:#a6e22e">&#39;cfg</span><span style="color:#f92672">&gt;</span>,
+    ) -&gt; <span style="color:#a6e22e">CargoResult</span><span style="color:#f92672">&lt;</span>Vec<span style="color:#f92672">&lt;</span>OutputFile<span style="color:#f92672">&gt;&gt;</span> {
+        ...
+        <span style="color:#75715e">// Convert FileType to OutputFile.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> outputs <span style="color:#f92672">=</span> Vec::new();
+        <span style="color:#66d9ef">for</span> file_type <span style="color:#66d9ef">in</span> file_types {
+            <span style="color:#66d9ef">let</span> meta <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>self.metas[unit];
+            <span style="color:#66d9ef">let</span> meta_opt <span style="color:#f92672">=</span> meta.use_extra_filename.then(<span style="color:#f92672">||</span> meta.meta_hash.to_string());
+            <span style="color:#66d9ef">let</span> path <span style="color:#f92672">=</span> out_dir.join(file_type.output_filename(<span style="color:#f92672">&amp;</span>unit.target, meta_opt.as_deref()));
+
+            <span style="color:#75715e">// ハードリンクで参照する名前を取得
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// If, the `different_binary_name` feature is enabled, the name of the hardlink will
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// be the name of the binary provided by the user in `Cargo.toml`.
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">let</span> hardlink <span style="color:#f92672">=</span> self.uplift_to(unit, <span style="color:#f92672">&amp;</span>file_type, <span style="color:#f92672">&amp;</span>path);
+            <span style="color:#66d9ef">let</span> export_path <span style="color:#f92672">=</span> <span style="color:#66d9ef">if</span> unit.target.is_custom_build() {
+                None
+            } <span style="color:#66d9ef">else</span> {
+                self.export_dir.as_ref().and_then(<span style="color:#f92672">|</span>export_dir<span style="color:#f92672">|</span> {
+                    hardlink
+                        .as_ref()
+                        .map(<span style="color:#f92672">|</span>hardlink<span style="color:#f92672">|</span> export_dir.join(hardlink.file_name().unwrap()))
+                })
+            };
+            outputs.push(OutputFile {
+                path,
+                hardlink,
+                export_path,
+                flavor: <span style="color:#a6e22e">file_type</span>.flavor,
+            });
+        }
+        Ok(outputs)
+    }
+    ...
+}
+</code></pre></div><p>cargoが最終的に生成する<code>OutputFile</code>構造体はこんな感じで定義されている。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// src/cargo/core/compiler/context/compilation_files.rs
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">OutputFile</span> {
+    <span style="color:#e6db74">/// Absolute path to the file that will be produced by the build process.
+</span><span style="color:#e6db74"></span>    <span style="color:#66d9ef">pub</span> path: <span style="color:#a6e22e">PathBuf</span>,
+    <span style="color:#e6db74">/// If it should be linked into `target`, and what it should be called
+</span><span style="color:#e6db74"></span>    <span style="color:#e6db74">/// (e.g., without metadata).
+</span><span style="color:#e6db74"></span>    <span style="color:#66d9ef">pub</span> hardlink: Option<span style="color:#f92672">&lt;</span>PathBuf<span style="color:#f92672">&gt;</span>,
+    <span style="color:#e6db74">/// If `--out-dir` is specified, the absolute path to the exported file.
+</span><span style="color:#e6db74"></span>    <span style="color:#66d9ef">pub</span> export_path: Option<span style="color:#f92672">&lt;</span>PathBuf<span style="color:#f92672">&gt;</span>,
+    <span style="color:#e6db74">/// Type of the file (library / debug symbol / else).
+</span><span style="color:#e6db74"></span>    <span style="color:#66d9ef">pub</span> flavor: <span style="color:#a6e22e">FileFlavor</span>,
+}
+</code></pre></div><h2 id="感想">感想</h2>
+<p>PRを読むのは勉強になる。
+インクリメンタルコンパイルのためのfingerprintという機能があるらしいが、それがどのようなものか、どのようにcargoで処理されているか気になった。</p>
+<h2 id="refs">Refs</h2>
+<ul>
+<li>cargo doc (<a href="https://doc.rust-lang.org/cargo/reference/manifest.html">https://doc.rust-lang.org/cargo/reference/manifest.html</a>)</li>
+<li>changed files (<a href="https://github.com/rust-lang/cargo/pull/9627/files#">https://github.com/rust-lang/cargo/pull/9627/files#</a>)</li>
+</ul>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/hugo-page/tags/rust/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Rust</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/hugo-page/tags/source-code-reading/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Source code reading</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">この記事の概要</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#はじめに">はじめに</a></li>
+    <li><a href="#基本事項">基本事項</a></li>
+    <li><a href="#prで提案された手法">PRで提案された手法</a></li>
+    <li><a href="#ハードリンク">ハードリンク</a></li>
+    <li><a href="#ソースコードを読む">ソースコードを読む</a></li>
+    <li><a href="#感想">感想</a></li>
+    <li><a href="#refs">Refs</a></li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">関連</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/hugo-page/post/2021-12-03/">rust-lang/rust ソースコードリーディング</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://www.tamaron.dev/hugo-page/" >
+    &copy;  tamaron 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>
