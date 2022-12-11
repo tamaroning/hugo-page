@@ -6,7 +6,7 @@ Copyright = "tamaron"
 
 DefaultContentLanguage = "ja"
 SectionPagesMenu = "main"
-Paginate = 3
+Paginate = 9
 
 [languages]
 [languages.ja]
