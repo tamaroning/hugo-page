@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Rustプログラム解析入門 | tamaron</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、KMCアドベントカレンダー2022の3日目(12/3)の記事です">
+    <meta name="generator" content="Hugo 0.79.1" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Rustプログラム解析入門" />
+<meta property="og:description" content="この記事は、KMCアドベントカレンダー2022の3日目(12/3)の記事です" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.tamaron.dev/post/2022-12-13/" />
+<meta property="article:published_time" content="2022-12-13T03:00:00+09:00" />
+<meta property="article:modified_time" content="2022-12-13T03:00:00+09:00" /><meta property="og:site_name" content="tamaron" />
+<meta itemprop="name" content="Rustプログラム解析入門">
+<meta itemprop="description" content="この記事は、KMCアドベントカレンダー2022の3日目(12/3)の記事です">
+<meta itemprop="datePublished" content="2022-12-13T03:00:00+09:00" />
+<meta itemprop="dateModified" content="2022-12-13T03:00:00+09:00" />
+<meta itemprop="wordCount" content="333">
+
+
+
+<meta itemprop="keywords" content="Rust,Compiler," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Rustプログラム解析入門"/>
+<meta name="twitter:description" content="この記事は、KMCアドベントカレンダー2022の3日目(12/3)の記事です"/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        tamaron
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/post/" title="Post page">
+              Post
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POST
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://twitter.com/share?url=https://www.tamaron.dev/post/2022-12-13/&amp;text=Rust%e3%83%97%e3%83%ad%e3%82%b0%e3%83%a9%e3%83%a0%e8%a7%a3%e6%9e%90%e5%85%a5%e9%96%80" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Rustプログラム解析入門</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2022-12-13T03:00:00+09:00">December 13, 2022</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>この記事は、KMCアドベントカレンダー2022の3日目(12/3)の記事です。(執筆時点で10日の大遅刻。ごめんなさい！)</p>
+<p>2日目の記事はkypさんの「<a href="https://kyp.jp/posts/ac2022/">2022年のNuitaにやったこと</a>」です。
+4日目の記事はwassさんの「<a href="https://memo.wass80.xyz/2022-12-05-shortcut-of-word/">ショートカットでコマンドを入力すると、どんな環境でもそこそこ便利になる</a>」です。</p>
+<h3 id="この記事の対象読者">この記事の対象読者</h3>
+<ul>
+<li>Rustやrustcに興味がある方</li>
+<li>言語処理系, プログラム解析に興味がある方</li>
+</ul>
+<h2 id="はじめに">はじめに</h2>
+<p>昨年夏にRustプログラムの解析方法について、KMC内で<a href="https://blog.kmc.gr.jp/entry/2022/07/05/232030">ハンズオン</a>を行いました。そこでRustプログラムの解析ツール minippy (<a href="https://github.com/tamaroning/minippy">GitHub</a>) を自作し、参加者の方々にソースコードを改造して遊んでもらいました。この記事は、前半ではRustプログラムの解析方法について説明し、後半では解析ツール minippy のソースコードを解説します。</p>
+<h2 id="プログラムの解析とは">プログラムの解析とは？</h2>
+<p>まず、プログラムの解析とはどのようなことをするのでしょうか？</p>
+<p>解析には、いろんな種類がありますが、すぐに思いつく応用例として以下のものが挙げられると思います。</p>
+<ul>
+<li>フォーマッティング</li>
+<li>Lint</li>
+<li>型検査</li>
+<li>Rustコンパイラの借用検査 (borrow check)</li>
+<li>逆コンパイル (decompile)</li>
+<li>最適化のための解析 (DCE, peephole)</li>
+</ul>
+<p>これらの例は、ソースコードをある形式へ変換し、それを用いて解析が行われます。</p>
+<p>より具体的には、以下のような解析に対応しています。</p>
+<ul>
+<li>フォーマッティング、Lint、型検査 → AST上の解析を利用</li>
+<li>Rustコンパイラの借用検査 (borrow check) → 制御フローグラフ上の解析を利用</li>
+<li>逆コンパイル、最適化のための解析 → 機械語(または低レベルな中間表現)上の解析を利用</li>
+</ul>
+<p>これらの形式(AST、制御フローグラフ、機械語など)は、解析の行いやすさによって選択されます。</p>
+<h2 id="ソースコードからastへ">ソースコードからASTへ</h2>
+<p>この記事では、主にAST上の解析を扱います。
+ASTとはAbstract Syntax Treeの略で、日本語では抽象構文木と呼ばれています。</p>
+<p>簡単な例として、整数リテラル <code>1</code> と変数 <code>foo</code> の加算からなる式 <code>1 + foo</code> を考えてみます。
+このソースコード <code>1 + foo</code> のASTはRustでは以下のようになります。</p>
+<figure class="center">
+    <img src="/analyze-rust-code/ast-add.png" height="350"/> 
+</figure>
+
+<p>ここでは、<code>foo</code> は変数名として適切でないので、この変数名を見つけて警告を行う処理を考えてみましょう。
+ASTは木構造なので、根から深さ優先探索を行い、各ノードに対してパターンマッチを行うことで、簡単に <code>foo</code> を発見することができます。</p>
+<figure class="center">
+    <img src="/analyze-rust-code/ast-add-foo.png" height="350"/> 
+</figure>
+
+<p>こういったASTの各ノードに対する処理の実装には、<a href="https://rust-unofficial.github.io/patterns/patterns/behavioural/visitor.html">visitorパターン</a>がよく用いられます。
+後から紹介するminippyでもvisitorパターンを利用しています。</p>
+<p>今は簡単な足し算のASTを考えましたが、関数や文からなる一般のプログラミング言語でもASTを構築することができます。</p>
+<h2 id="minippy">minippy</h2>
+<p>minippyはRustのASTを解析するプログラムで、<a href="https://github.com/tamaroning/minippy">GitHub</a>上で公開されています。
+以下のコマンドですぐに利用することができます。</p>
+<pre><code>$ git clone https://github.com/tamaroning/minippy.git
+$ cd minippy
+$ cargo run tests/add_zero.rs
+</code></pre><p>もともと、<code>tests/add_zero.rs</code> には簡単な足し算を計算するRustプログラムがあります。
+<code>$ cargo run ./tests/add_zero.rs</code> を実行すると、 このソースコードに含まれるゼロ加算を警告してくれます。</p>
+<figure class="center">
+    <img src="/analyze-rust-code/minippy-result.png" height="400"/> 
+</figure>
+
+<h3 id="ソースコード解説">ソースコード解説</h3>
+<p>つづいて、minippyのソースコードを見ていきます。</p>
+<p>まず、minippyでは、unstableなRustコンパイラ (rustc) のAPIを利用しています。
+そのため、<code>rust-toolchain.toml</code>では。以下のように利用するrustcのバージョンを指定しています。</p>
+<p>rust-toolchain.toml:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[<span style="color:#a6e22e">toolchain</span>]
+<span style="color:#a6e22e">channel</span> = <span style="color:#e6db74">&#34;nightly-2022-07-02&#34;</span>
+<span style="color:#a6e22e">components</span> = [<span style="color:#e6db74">&#34;rustfmt&#34;</span>, <span style="color:#e6db74">&#34;rustc-dev&#34;</span>, <span style="color:#e6db74">&#34;rust-src&#34;</span>, <span style="color:#e6db74">&#34;llvm-tools-preview&#34;</span>]
+</code></pre></div><p>次に、main関数です。</p>
+<p>src/main.rs</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{USAGE}&#34;</span>);
+
+    rustc_driver::init_rustc_env_logger();
+    std::process::exit(rustc_driver::catch_with_exit_code(<span style="color:#66d9ef">move</span> <span style="color:#f92672">||</span> {
+        <span style="color:#66d9ef">let</span> out <span style="color:#f92672">=</span> process::Command::new(<span style="color:#e6db74">&#34;rustc&#34;</span>)
+            .arg(<span style="color:#e6db74">&#34;--print=sysroot&#34;</span>)
+            .current_dir(<span style="color:#e6db74">&#34;.&#34;</span>)
+            .output()
+            .unwrap();
+        <span style="color:#66d9ef">let</span> sys_root <span style="color:#f92672">=</span> <span style="color:#66d9ef">str</span>::from_utf8(<span style="color:#f92672">&amp;</span>out.stdout).unwrap().trim().to_string();
+
+        <span style="color:#66d9ef">let</span> orig_args: Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> std::env::args().collect();
+        <span style="color:#66d9ef">let</span> filepath <span style="color:#f92672">=</span> orig_args.last().unwrap().to_string();
+
+        <span style="color:#66d9ef">let</span> args: Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> vec<span style="color:#f92672">!</span>[
+            <span style="color:#e6db74">&#34;rustc&#34;</span>.to_string(),
+            filepath,
+            <span style="color:#e6db74">&#34;--sysroot&#34;</span>.to_string(),
+            sys_root,
+        ];
+
+        rustc_driver::RunCompiler::new(<span style="color:#f92672">&amp;</span>args, <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> MinippyCallBacks).run()
+    }));
+}
+</code></pre></div><p>まず、<code>$ rustc --print=sysroot</code> というコマンドを実行し、出力結果を変数 <code>sys_root</code> に格納します。</p>
+<p>sysroot はrustcのバイナリや標準ライブラリが置かれているディレクトリへのパスを表しています。私の環境では、sysroot は <code>C:\Users\tamaron\.rustup\toolchains\nightly-2022-07-02-x86_64-pc-windows-msvc</code> でした。</p>
+<p>次に、これとコマンドライン引数をファイルパスと見なして、<code>$ rustc &lt;ファイルパス&gt; --sysroot &lt;sys_root&gt;</code> を実行します。</p>
+<p>ここではさらに、rustc API の機能を利用して <code>MinippyCallBacks</code> をrustcのコールバックとして指定しています。</p>
+<p><code>MinippyCallBacks</code> は <code>rustc_driver::Callbacks</code> トレイトを実装していて、ASTを解析するための Pass を登録しています。
+今、ゼロ加算を検出する機能を実装したいので、ここで登録しているのはAddZeroという Pass です。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MinippyCallBacks</span>;
+
+<span style="color:#66d9ef">impl</span> rustc_driver::Callbacks <span style="color:#66d9ef">for</span> MinippyCallBacks {
+    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">config</span>(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> self, config: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">mut</span> rustc_interface::Config) {
+        config.register_lints <span style="color:#f92672">=</span> Some(Box::new(<span style="color:#66d9ef">move</span> <span style="color:#f92672">|</span>_sess, lint_store<span style="color:#f92672">|</span> {
+            lint_store.register_late_pass(<span style="color:#f92672">||</span> Box::new(AddZero));
+        }));
+    }
+    <span style="color:#75715e">// ... 
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>つづいて、コールバックによって登録された <code>AddZero</code> 構造体を見ていきます。</p>
+<p>src/main.rs</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">AddZero</span>;
+<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">is_lit_zero</span>(expr: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">Expr</span>) -&gt; <span style="color:#66d9ef">bool</span> {
+    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> ExprKind::Lit(lit) <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>expr.kind
+        <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">let</span> LitKind::Int(<span style="color:#ae81ff">0</span>, ..) <span style="color:#f92672">=</span> lit.node
+    { <span style="color:#66d9ef">true</span> }
+    <span style="color:#66d9ef">else</span> { <span style="color:#66d9ef">false</span> }
+}
+
+<span style="color:#66d9ef">impl</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;tcx</span><span style="color:#f92672">&gt;</span> rustc_lint::LateLintPass<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;tcx</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">for</span> AddZero {
+    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">check_expr</span>(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> self, cx: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">LateContext</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;tcx</span><span style="color:#f92672">&gt;</span>, expr: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;tcx</span> Expr<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;tcx</span><span style="color:#f92672">&gt;</span>) {
+        <span style="color:#66d9ef">if</span> expr.span.from_expansion() {
+            <span style="color:#66d9ef">return</span>;
+        }
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> ExprKind::Binary(binop, lhs, rhs) <span style="color:#f92672">=</span> expr.kind
+            <span style="color:#f92672">&amp;&amp;</span> BinOpKind::Add <span style="color:#f92672">==</span> binop.node
+            <span style="color:#f92672">&amp;&amp;</span> (is_lit_zero(lhs) <span style="color:#f92672">||</span> is_lit_zero(rhs))
+        {
+            cx.struct_span_lint(ADD_ZERO, expr.span, <span style="color:#f92672">|</span>diag<span style="color:#f92672">|</span> {
+                <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> diag <span style="color:#f92672">=</span> diag.build(<span style="color:#e6db74">&#34;Ineffective operation&#34;</span>);
+                diag.emit();
+            });
+        }
+    }
+}
+</code></pre></div><p>この構造体は、<code>rustc_lint::LateLintPass</code> トレイトを実装していて、
+このトレイトはASTのノードに対して特定の処理を行うためのvisitorパターンが実装されています。</p>
+<p><code>&quot;0 + 1&quot;</code>, <code>&quot;1 + 0 + a&quot;</code> といったコードはRustでは式として解釈されるので、<code>check_expr</code> という関数にゼロ加算を検出するロジックを書きます。</p>
+<p>式がゼロ加算となる条件は、「式が二項演算の足し算(<code>BinOpKind::Add</code>)である」かつ「
+「左辺(<code>lhs</code>)または右辺(<code>rhs</code>)がリテラルの0である」となるため、if 文でこれを実装しています。</p>
+<p>ここでは、さらにヘルパー関数として、整数リテラルかどうかを返す <code>is_let_zero</code> 関数を用意して使っています。</p>
+<h3 id="余力がある人向け">余力がある人向け</h3>
+<p>これまでの解説が簡単に感じた人は演習として、課題を用意しておきました。正解は無いですが、ぜひ取り組んでみてください。
+以下の機能をminippyに実装してください。</p>
+<ul>
+<li>課題1: 特定の変数名が宣言された場合に警告を行う (例えば <code>foo</code>, <code>bar</code>)</li>
+<li>課題2: 特定のメソッドチェーンの並びが検出された場合に警告を行う (例えば <code>.map(_).map(_)</code>)</li>
+</ul>
+<h2 id="おわりに">おわりに</h2>
+<p>minippyはRust公式Linterである<a href="https://github.com/rust-lang/rust-clippy">Clippy</a>を参考にして作りました。
+ClippyはASTだけでなく制御フローグラフベースの解析 (MIR lint) も実装されていて、とても面白いです。
+興味があれば、ソースコードを読んで見ることをおすすめします。</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/rust/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Rust</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/compiler/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Compiler</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">What&#39;s in this post</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#この記事の対象読者">この記事の対象読者</a></li>
+      </ul>
+    </li>
+    <li><a href="#はじめに">はじめに</a></li>
+    <li><a href="#プログラムの解析とは">プログラムの解析とは？</a></li>
+    <li><a href="#ソースコードからastへ">ソースコードからASTへ</a></li>
+    <li><a href="#minippy">minippy</a>
+      <ul>
+        <li><a href="#ソースコード解説">ソースコード解説</a></li>
+        <li><a href="#余力がある人向け">余力がある人向け</a></li>
+      </ul>
+    </li>
+    <li><a href="#おわりに">おわりに</a></li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/post/2021-12-03/">rust-lang/rust ソースコードリーディング</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/post/2021-12-11/">rust-lang/cargo ソースコードリーディング</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/post/2021-11-20/">コンパイラ最適化を実装する</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://www.tamaron.dev/" >
+    &copy;  tamaron 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+    
+    <a href="https://twitter.com/tamaroning" target="_blank" rel="noopener" class="twitter ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="Twitter link" aria-label="follow on Twitter——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    
+    <a href="https://github.com/tamaroning" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>
