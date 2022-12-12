@@ -1,6 +1,6 @@
 ---
-title: "tamaron's homepage"
-description: "WIP page"
+title: 'tamaron'
+description: ""
 featured_image: ''
 type: page
 omit_header_text: true
