@@ -2,27 +2,27 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Rust on tamaron</title>
-    <link>https://www.tamaron.dev/hugo-page/tags/rust/</link>
+    <link>https://www.tamaron.dev/tags/rust/</link>
     <description>Recent content in Rust on tamaron</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>tamaron</copyright>
-    <lastBuildDate>Sat, 11 Dec 2021 12:00:00 +0900</lastBuildDate><atom:link href="https://www.tamaron.dev/hugo-page/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 11 Dec 2021 12:00:00 +0900</lastBuildDate><atom:link href="https://www.tamaron.dev/tags/rust/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>rust-lang/cargo ソースコードリーディング</title>
-      <link>https://www.tamaron.dev/hugo-page/post/2021-12-11/</link>
+      <link>https://www.tamaron.dev/post/2021-12-11/</link>
       <pubDate>Sat, 11 Dec 2021 12:00:00 +0900</pubDate>
       
-      <guid>https://www.tamaron.dev/hugo-page/post/2021-12-11/</guid>
+      <guid>https://www.tamaron.dev/post/2021-12-11/</guid>
       <description>cargoの[[bin]]属性の処理を解説した記事です。</description>
     </item>
     
     <item>
       <title>rust-lang/rust ソースコードリーディング</title>
-      <link>https://www.tamaron.dev/hugo-page/post/2021-12-03/</link>
+      <link>https://www.tamaron.dev/post/2021-12-03/</link>
       <pubDate>Fri, 03 Dec 2021 12:00:00 +0900</pubDate>
       
-      <guid>https://www.tamaron.dev/hugo-page/post/2021-12-03/</guid>
+      <guid>https://www.tamaron.dev/post/2021-12-03/</guid>
       <description>これはKMC(京大マイコンクラブ)アドベントカレンダー2021の3日目の記事です。</description>
     </item>
     
