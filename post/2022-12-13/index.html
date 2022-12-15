@@ -237,7 +237,7 @@ $ cargo run tests/add_zero.rs
 <h3 id="ソースコード解説">ソースコード解説</h3>
 <p>つづいて、minippyのソースコードを見ていきます。</p>
 <p>まず、minippyでは、unstableなRustコンパイラ (rustc) のAPIを利用しています。
-そのため、<code>rust-toolchain.toml</code>では。以下のように利用するrustcのバージョンを指定しています。</p>
+そのため、<code>rust-toolchain.toml</code>では、以下のように利用するrustcのバージョンを指定しています。</p>
 <p>rust-toolchain.toml:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[<span style="color:#a6e22e">toolchain</span>]
 <span style="color:#a6e22e">channel</span> = <span style="color:#e6db74">&#34;nightly-2022-07-02&#34;</span>
@@ -315,10 +315,10 @@ $ cargo run tests/add_zero.rs
 }
 </code></pre></div><p>この構造体は、<code>rustc_lint::LateLintPass</code> トレイトを実装していて、
 このトレイトはASTのノードに対して特定の処理を行うためのvisitorパターンが実装されています。</p>
-<p><code>&quot;0 + 1&quot;</code>, <code>&quot;1 + 0 + a&quot;</code> といったコードはRustでは式として解釈されるので、<code>check_expr</code> という関数にゼロ加算を検出するロジックを書きます。</p>
+<p><code>&quot;0 + 1&quot;</code>, <code>&quot;1 + 0 + a&quot;</code> といったコードはRustでは式として扱われるので、<code>check_expr</code> という関数にゼロ加算を検出するロジックを書きます。</p>
 <p>式がゼロ加算となる条件は、「式が二項演算の足し算(<code>BinOpKind::Add</code>)である」かつ「
-「左辺(<code>lhs</code>)または右辺(<code>rhs</code>)がリテラルの0である」となるため、if 文でこれを実装しています。</p>
-<p>ここでは、さらにヘルパー関数として、整数リテラルかどうかを返す <code>is_let_zero</code> 関数を用意して使っています。</p>
+「左辺(<code>lhs</code>)または右辺(<code>rhs</code>)がリテラルの0である」となるため、if 文でこれを実装しています。
+ここでは、さらにヘルパー関数として、整数リテラルかどうかを返す <code>is_let_zero</code> 関数を用意して使っています。</p>
 <h3 id="余力がある人向け">余力がある人向け</h3>
 <p>これまでの解説が簡単に感じた人は演習として、課題を用意しておきました。正解は無いですが、ぜひ取り組んでみてください。
 以下の機能をminippyに実装してください。</p>
